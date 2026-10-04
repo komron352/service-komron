@@ -1,16 +1,28 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-const Ctx = createContext<any>(null)
-export function AuthProvider({children}:{children:any}){
-  const [user,setUser]=useState<any>(null)
-  const [loading,setLoading]=useState(true)
+
+type User = { id:string, email:string } | null
+
+const AuthContext = createContext<{user:User, loading:boolean, signOut:()=>void}>({user:null, loading:true, signOut:()=>{}})
+
+export function AuthProvider({children}:{children:React.ReactNode}){
+  const [user, setUser] = useState<User>(null)
+  const [loading, setLoading] = useState(true)
+
   useEffect(()=>{
-    supabase.auth.getSession().then(({data}:any)=>{ setUser(data.session?.user||null); setLoading(false)})
-    const {data:listener}=supabase.auth.onAuthStateChange((_e:any,s:any)=>setUser(s?.user||null))
-    return ()=>listener.subscription.unsubscribe()
+    supabase.auth.getSession().then(({data})=>{
+      setUser(data.session?.user ? { id: data.session.user.id, email: data.session.user.email || '' } : null)
+      setLoading(false)
+    })
+    const {data: listener} = supabase.auth.onAuthStateChange((_e, session)=>{
+      setUser(session?.user ? { id: session.user.id, email: session.user.email || '' } : null)
+    })
+    return ()=> listener.subscription.unsubscribe()
   },[])
-  const signIn = async (email:string,password:string)=> supabase.auth.signInWithPassword({email,password})
-  const signOut = async ()=> supabase.auth.signOut()
-  return <Ctx.Provider value={{user,loading,signIn,signOut}}>{children}</Ctx.Provider>
+
+  const signOut = async ()=> { await supabase.auth.signOut(); setUser(null) }
+
+  return <AuthContext.Provider value={{user, loading, signOut}}>{children}</AuthContext.Provider>
 }
-export const useAuth = ()=> useContext(Ctx)
+
+export const useAuth = ()=> useContext(AuthContext)
