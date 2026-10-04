@@ -1,29 +1,35 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { AuthProvider } from './hooks/useAuth.tsx'
-import ProtectedRoute from './components/ProtectedRoute.tsx'
-import Layout from './components/Layout.tsx'
-import Login from './components/Login.tsx'
-import Dashboard from './pages/Dashboard.tsx'
-import Clients from './pages/Clients.tsx'
-import Services from './pages/Services.tsx'
-import Invoices from './pages/Invoices.tsx'
-import Settings from './pages/Settings.tsx'
+import { useAuth } from './hooks/useAuth'
+import Login from './pages/Login'
+import Dashboard from './pages/Dashboard'
+import Clients from './pages/Clients'
+import CalendarPage from './pages/CalendarPage'
+import ServicesPage from './pages/ServicesPage'
+import SmsLogs from './pages/SmsLogs'
+import SettingsPage from './pages/SettingsPage'
+import Layout from './components/Layout'
+
+function Protected({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth()
+  if (loading) return <div className="min-h-screen bg-[#08080a] flex items-center justify-center text-[#8a8a8e]">Боркунӣ...</div>
+  if (!user) return <Navigate to="/login" replace />
+  return <>{children}</>
+}
+
 export default function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-            <Route index element={<Dashboard />} />
-            <Route path="clients" element={<Clients />} />
-            <Route path="services" element={<Services />} />
-            <Route path="invoices" element={<Invoices />} />
-            <Route path="settings" element={<Settings />} />
-          </Route>
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Protected><Layout /></Protected>}>
+          <Route index element={<Dashboard />} />
+          <Route path="clients" element={<Clients />} />
+          <Route path="calendar" element={<CalendarPage />} />
+          <Route path="services" element={<ServicesPage />} />
+          <Route path="sms" element={<SmsLogs />} />
+          <Route path="settings" element={<SettingsPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }

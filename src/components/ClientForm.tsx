@@ -1,10 +1,5 @@
-export default function ClientForm({ onClose }: any) {
-  return (
-    <div className="border rounded p-4 bg-white">
-      <div className="font-medium mb-2">New Client</div>
-      <input className="w-full border rounded px-3 py-2 mb-2" placeholder="Name" />
-      <input className="w-full border rounded px-3 py-2 mb-2" placeholder="Phone" />
-      <button onClick={onClose} className="bg-black text-white px-3 py-1 rounded text-sm">Save</button>
-    </div>
-  )
+import { useState } from 'react'
+export default function ClientForm({ onClose }: { onClose: ()=>void }){
+  const [name,setName]=useState(''); const [phone,setPhone]=useState('')
+  return <div className="fixed inset-0 bg-black/60 backdrop-blur-sm grid place-items-center p-4 z-50"><div className="bg-[#111113] border border-[#232326] rounded-2xl w-full max-w-md p-6"><h3 className="text-white font-semibold">Мизоҷи нав</h3><div className="mt-4 space-y-3"><input value={name} onChange={e=>setName(e.target.value)} placeholder="Ном" className="w-full h-11 bg-[#08080a] border border-[#232326] rounded-xl px-4 text-white"/><input value={phone} onChange={e=>setPhone(e.target.value)} placeholder="Телефон" className="w-full h-11 bg-[#08080a] border border-[#232326] rounded-xl px-4 text-white"/></div><div className="mt-6 flex gap-3"><button onClick={onClose} className="flex-1 h-10 rounded-xl bg-[#1e1e20] text-white">Бекор</button><button onClick={onClose} className="flex-1 h-10 rounded-xl bg-[#d4a017] text-black font-semibold">Сабт</button></div></div></div>
 }

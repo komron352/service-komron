@@ -1,16 +1,42 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase.ts'
-type AuthCtx = { user: any; loading: boolean; signOut: () => Promise<void> }
-const Ctx = createContext<AuthCtx>({ user: null, loading: true, signOut: async () => {} })
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<any>(null)
+import { useEffect, useState } from 'react'
+import { supabase, ADMIN_USERNAME, ADMIN_EMAIL, isConfigured } from '../lib/supabase'
+import type { Session, User } from '@supabase/supabase-js'
+
+export function useAuth() {
+  const [user, setUser] = useState<User | null>(null)
+  const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }: any) => { setUser(data.session?.user ?? null); setLoading(false) })
-    const { data: sub } = supabase.auth.onAuthStateChange((_e: any, sess: any) => setUser(sess?.user ?? null))
-    return () => sub.subscription.unsubscribe()
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session)
+      setUser(data.session?.user ?? null)
+      setLoading(false)
+    })
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, sess) => {
+      setSession(sess)
+      setUser(sess?.user ?? null)
+      setLoading(false)
+    })
+    return () => listener.subscription.unsubscribe()
   }, [])
-  const signOut = async () => { await supabase.auth.signOut() }
-  return <Ctx.Provider value={{ user, loading, signOut }}>{children}</Ctx.Provider>
+
+  const signIn = async (username: string, password: string) => {
+    if (!isConfigured) throw new Error('Supabase танзим нашудааст')
+    if (username.trim().toUpperCase() !== ADMIN_USERNAME) {
+      throw new Error('Ном нодуруст')
+    }
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: ADMIN_EMAIL,
+      password,
+    })
+    if (error) throw error
+    return data
+  }
+
+  const signOut = async () => {
+    await supabase.auth.signOut()
+  }
+
+  return { user, session, loading, signIn, signOut, isConfigured }
 }
-export const useAuth = () => useContext(Ctx)
