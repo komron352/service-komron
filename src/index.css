@@ -2,7 +2,4 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { color-scheme: dark; }
-body { margin:0; background:#08080a; color:#e5e5e5; font-family: Inter, system-ui, sans-serif; }
-::-webkit-scrollbar { width:6px; height:6px; }
-::-webkit-scrollbar-thumb { background:#2a2a2e; border-radius:3px; }
+body { font-family: Inter, system-ui, sans-serif; }

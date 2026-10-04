@@ -1,35 +1,64 @@
 import { useState } from 'react'
-import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
+import { Input } from '../components/ui/input'
+import { Button } from '../components/ui/button'
+import { Card } from '../components/ui/card'
 
-export default function Login(){
+export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const { signIn, isConfigured } = useAuth()
   const nav = useNavigate()
 
-  const handle = async (e:React.FormEvent)=>{
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true); setError('')
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    setError(null)
+    setLoading(true)
+    const { error: err } = await signIn(email, password)
     setLoading(false)
-    if(error) setError(error.message)
+    if (err) setError(err)
     else nav('/')
   }
 
   return (
-    <div className="min-h-screen bg-[#08080a] flex items-center justify-center p-4">
-      <div className="w-full max-w-[400px] rounded-[24px] border border-zinc-800 bg-[#111113] p-8">
-        <h1 className="text-2xl font-black text-[#d4a017]">IMRAN SERVICE</h1>
-        <p className="text-zinc-500 text-sm mt-1">Воридшавӣ ба CRM</p>
-        <form onSubmit={handle} className="mt-8 space-y-4">
-          <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email" className="w-full bg-[#08080a] border border-zinc-800 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#d4a017] text-white" required />
-          <input type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Парол" className="w-full bg-[#08080a] border border-zinc-800 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#d4a017] text-white" required />
-          {error && <p className="text-red-400 text-xs bg-red-500/10 border border-red-500/20 p-2 rounded-lg">{error}</p>}
-          <button disabled={loading} className="w-full bg-[#d4a017] text-black font-semibold py-3 rounded-xl text-sm disabled:opacity-50">{loading ? 'Санҷиш...' : 'Ворид шудан'}</button>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <Card className="w-full max-w-md">
+        <h1 className="text-2xl font-bold mb-2">Komron CRM - Воридшавӣ</h1>
+
+        {!isConfigured && (
+          <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm">
+            ⚠️ Supabase танзим нашудааст! <br />
+            Дар Vercel: Settings → Environment Variables → VITE_SUPABASE_URL ва VITE_SUPABASE_ANON_KEY-ро санҷед, сипас Redeploy кунед.
+          </div>
+        )}
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            {error.includes('Пайвастшавӣ') ? (
+              <>
+                <div className="font-bold mb-1">Load failed / Пайвастшавӣ нашуд</div>
+                <div>{error}</div>
+                <div className="mt-2 text-xs opacity-80">
+                  1. Vercel Env тафтиш кунед<br />
+                  2. Redeploy кунед<br />
+                  3. Supabase URL дуруст аст?
+                </div>
+              </>
+            ) : error}
+          </div>
+        )}
+
+        <form onSubmit={handleLogin} className="space-y-4">
+          <Input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} type="email" required />
+          <Input placeholder="Парол" value={password} onChange={e => setPassword(e.target.value)} type="password" required />
+          <Button type="submit" disabled={loading} className="w-full">
+            {loading ? 'Боркунӣ...' : 'Ворид шудан'}
+          </Button>
         </form>
-      </div>
+      </Card>
     </div>
   )
 }

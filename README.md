@@ -1,23 +1,10 @@
-# IMRAN SERVICE CRM
+# Komron Service CRM - Fixed
 
-Системаи идоракунии хидматрасонӣ барои IMRAN SERVICE
+## Fix Load failed
 
-## Насб
-```bash
-npm install
-npm run dev
-```
+Сабаб: supabase null, sb_publishable_ key, isConfigured check нодуруст
 
-## Build
-```bash
-npm run build
-``` гарантия - strict:false, vite-env.d.ts мавҷуд
-
-## Deploy Vercel
-- Framework: Vite
-- Build: npm run build
-- Output: dist
-
-## Хусусиятҳо
-- Мизоҷон, Таъинот, Хизматрасониҳо, SMS
-- Supabase Auth + DB
+## Setup
+1. Vercel Env: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
+2. Redeploy
+3. Supabase Site URL: https://komron.vercel.app
