@@ -1,1 +1,2 @@
-export default function Services() { return <h1 className="text-2xl font-bold">Хизматрасониҳо</h1> }
+import ServiceCard from '../components/ServiceCard.tsx'
+export default function Services() { return <div><h1 className="text-xl font-semibold">Services</h1><div className="mt-4 grid grid-cols-2 gap-4"><ServiceCard title="Repair" /><ServiceCard title="Installation" /></div></div> }

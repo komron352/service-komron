@@ -1,1 +1,1 @@
-export default function Settings() { return <h1 className="text-2xl font-bold">Танзимот</h1> }
+export default function Settings() { return <div><h1 className="text-xl font-semibold">Settings</h1><div className="mt-4 bg-white border rounded p-4">Supabase configuration</div></div> }

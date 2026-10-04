@@ -1,1 +1,1 @@
-export default function NotFound() { return <div className="p-8">Саҳифа ёфт нашуд - 404</div> }
+export default function NotFound() { return <div className="p-10">Not found</div> }

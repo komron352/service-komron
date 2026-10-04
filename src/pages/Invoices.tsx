@@ -1,0 +1,1 @@
+export default function Invoices() { return <div><h1 className="text-xl font-semibold">Invoices</h1><div className="mt-4 bg-white border rounded p-4 text-sm text-zinc-500">No invoices yet</div></div> }

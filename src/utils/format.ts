@@ -1,0 +1,1 @@
+export const formatDate = (d: any) => { try { return new Date(d).toLocaleDateString() } catch { return String(d) } }
