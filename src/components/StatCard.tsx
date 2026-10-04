@@ -1,3 +1,9 @@
-export default function StatCard({ title, value, sub }: { title:string, value:string, sub?:string }){
-  return <div className="bg-[#111113] border border-[#1e1e20] rounded-2xl p-5"><div className="text-[11px] tracking-widest text-[#7a7a80] uppercase">{title}</div><div className="mt-2 text-[26px] font-semibold text-white">{value}</div>{sub && <div className="mt-1 text-[12px] text-[#8a8a8e]">{sub}</div>}</div>
+export default function StatCard({ title, value, sub }: { title: string, value: string|number, sub?: string }) {
+  return (
+    <div className="bg-white p-5 rounded-2xl border shadow-sm">
+      <div className="text-sm text-slate-500">{title}</div>
+      <div className="text-2xl font-bold mt-1">{value}</div>
+      {sub && <div className="text-xs text-slate-400 mt-1">{sub}</div>}
+    </div>
+  )
 }
